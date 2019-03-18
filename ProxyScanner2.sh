@@ -9,6 +9,14 @@ set -a
 
 source config.vars
 
+unset HTTP_PROXY
+unset HTTPS_PROXY
+
+if [[ "${VERBOSE}" -eq 1 ]]; then
+    set -x
+    MISC_PARALLEL_OPTS="${MISC_PARALLEL_OPTS} --eta"
+fi
+
 declare -A FUNCNAMES_MAPPING
 
 function create_proxy_scanner_directories() {
@@ -70,19 +78,23 @@ function inject_scripts() {
     for x in {extractors,plugins}; do
         for script in $(find $x/ -type f -name "*.sh"); do
             file_hash=$(sha256sum $script | awk '{print $1}' | tr -d '\n' | head -c 12)
-            ext="${ext}\n"$($ENV_BIN -i $BASH_BIN --noprofile --norc <<xxx
-    set -a 
-    source <(cat ./$script)  
-    set +a 
-    declare -f
+            ext="${ext}
+                "$($ENV_BIN -i $BASH_BIN --noprofile --norc <<xxx
+                 set -a
+                 source <(cat ./$script)  
+                 set +a
+                 declare -f
 xxx
                )
         done
-        for K in "${!FUNCNAMES_MAPPING[@]}"; do 
-            ext=$(echo -e "${ext}" | sed "s/${K}/${FUNCNAMES_MAPPING[$K]}/g")
+
+        for K in "${!FUNCNAMES_MAPPING[@]}"; do
+            ext=$(echo "${ext}" | sed "s/\<${K}\>/${FUNCNAMES_MAPPING[$K]}/g")
         done
 
-        source <(echo -e "#!/bin/bash\n ${ext} \n" )
+        source <(echo "#!/bin/bash
+                      ${ext}" )
+
     done
 }
 
@@ -92,7 +104,7 @@ console_log "Loading plugins and extractors..."
 
 inject_scripts
 
-if [[ "$VERBOSE" == 1 ]]; then
+if [[ "$VERBOSE" -eq 1 ]]; then
     declare -F;
 fi
 

@@ -1,11 +1,20 @@
 #!/bin/bash 
-
-function proxy_list_dot_download_scrape_socks5() {
-
-  curl 'https://www.proxy-list.download/api/v0/get?l=en&t=socks5' \
-    -H 'Referer: https://www.proxy-list.download/SOCKS5' \
-    -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36' \
-    --compressed \
-    | jq -r '.[] | .LISTA | .[] | .IP + ":" + .PORT'
-}
  
+function socks5_microsoft_head() {
+    nice -n $PARALLEL_JOB_NICENESS $CURL_BIN                                                             \
+         $MISC_CURL_OPTS                                                                                 \
+         --retry $CURL_RETRY_COUNT                                                                       \
+         --connect-timeout $CURL_CONNECT_TIMEOUT                                                         \
+         -L                                                                                              \
+         --cookie-jar $COOKIE_JARS/proxy-list.download                                                   \
+         'https://www.proxy-list.download/api/v0/get?l=en&t=socks5'                                      \
+        | jq -r '.[] | .LISTA | .[] | .IP + ":" + .PORT'                                                 \
+        | tr ':' ' '                                                                                     \
+        | nice -n $PARALLEL_NICENESS $PARALLEL_BIN                                                       \
+               --colsep ' '                                                                              \
+               --joblog $PARALLEL_JOB_LOGS/$(date +"${DATESTAMP_FORMAT}").proxy-list.download.socks5.log \
+               $MISC_PARALLEL_OPTS                                                                       \
+               -j $PARALLEL_FORK                                                                         \
+               socks5_microsoft_head_cmd "{1}" "{2}"
+}
+

@@ -20,19 +20,6 @@ function http_microsoft_head_cmd() {
   --cookie-jar $COOKIE_JARS/$1:$2          \
   -I http://microsoft.com                  \
   -o $HTTP_RESULT_DIR/$1:$2
-
-}
-
-# the actual parallel call for http_head
-function http_microsoft_head() {
-  cat $1                                                                      \
-    | tr ':' ' '                                                              \
-    | nice -n $PARALLEL_NICENESS $PARALLEL_BIN                                \
-    --colsep ' '                                                              \
-    --joblog $PARALLEL_JOB_LOGS/$(date +"${DATESTAMP_FORMAT}").log            \
-    $MISC_PARALLEL_OPTS                                                       \
-    -j $PARALLEL_FORK                                                         \
-    http_microsoft_head_cmd "{1}" "{2}"
 }
 
 function process_microsoft_results() { 
