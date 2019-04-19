@@ -2,9 +2,9 @@
 Adding a new proxy source is really easy. You just need to make a file and put a function in it that enumerates a list of handler://hostname:port pairs. for example: 
 
 `
-http://63.225.191.41:8000
-socks4://206.125.168.65:3128
-socks5a://75.146.55.254:8080
+- http://63.225.191.41:8000
+- socks4://206.125.168.65:3128
+- socks5a://75.146.55.254:8080
 `
 
 and store the file in the `extractors/` directory. When ProxyScanner2 is started and it's reached the extraction phase your extractor will be automatically loaded by the
