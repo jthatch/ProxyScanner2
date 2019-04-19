@@ -1,4 +1,5 @@
-# Adding a new proxy source is really easy. You just need to make a file and put a function in it that enumerates a list of handler://hostname:port pairs. for example: 
+# Extending
+Adding a new proxy source is really easy. You just need to make a file and put a function in it that enumerates a list of handler://hostname:port pairs. for example: 
 
 `
 http://63.225.191.41:8000
