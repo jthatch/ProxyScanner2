@@ -1,11 +1,5 @@
 # Extending
-Adding a new proxy source is really easy. You just need to make a file and put a function in it that enumerates a list of handler://hostname:port pairs. for example: 
-
-`
-- http://63.225.191.41:8000
-- socks4://206.125.168.65:3128
-- socks5a://75.146.55.254:8080
-`
+Adding a new proxy source is really easy. You just need to make a file and put a function in it that enumerates a list of handler://hostname:port pairs. 
 
 and store the file in the `extractors/` directory. When ProxyScanner2 is started and it's reached the extraction phase your extractor will be automatically loaded by the
 dependency injector built into ProxyScanner2. Here's an example of an extractor (proxy-list.download.socks5 )
@@ -40,7 +34,7 @@ And since your code is being run in the ProxyScanner's environment your script a
 
 - A DSL/limted API is in the works to make implementing new extractors easy and effective 
 
-- Sandboxed operational context versioning per-extractor and a simple API for creating user-defined phases: for module <-> extractor or extractor <-> extractor interoperability. 
+- Versioning per-extractor and a simple API for creating user-defined phases: for module <-> extractor or extractor <-> extractor interoperability. 
 
 - Dockerfile and docker-compose.yml 
 
@@ -50,6 +44,3 @@ And since your code is being run in the ProxyScanner's environment your script a
 - access to my private library of extractors 
 - unlimited access to HAProxy.
 
-## What are seeds 
-lists of proxies collected and maintained over a period of time which have earned their reputation for being reliable. ProxyScanner2 is able to process hundreds of requests per second very
-efficiently mostly using GNU Parallel and CURL. A list of ~100K proxies will finish in 5-7 minutes (FORK=500, 200MBps and >=200ms latency to the internet.) 
